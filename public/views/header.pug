@@ -1,0 +1,35 @@
+header.text-center
+  a(href='/')
+    span.banner Printe-clone
+  ul
+    if selected==="home"
+      li.selected
+        a(href='/')  All Pics
+    else
+      li
+        a(href='/')  All Pics
+
+    if selected ==="profile"
+      li.selected
+        a(href='/profile')  My Pics
+    else
+      li
+        a(href='/profile')  My Pics
+
+    if isAuthenticated 
+      li.dropdownm
+        a.dropbtnm(href='#') Add Pic
+        .dropdown-contentm
+          form(method='post', action='/api/')
+            input#inUrl.form-control(name='url',pattern='(https?:\/\/.*\.(?:png|jpg|jpeg))', type='text', placeholder='url', required='')
+            input#inTitle.form-control(name="title",type='text', placeholder='title')
+            button.btn.btn-primary.btn-block(type='submit') Submit
+    else
+      li
+        a(href='/login')  Add Pic
+
+    li#logbut
+      if isAuthenticated
+       a(href='/logout') Logout
+      else
+        a(href='/login') Login

@@ -1,0 +1,41 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    title Printe-clone
+    link(rel='shortcut icon', type='image/x-icon', href='https://cdn.hyperdev.com/us-east-1%3A60e6615e-7d9e-47ac-903b-3b4b47372e42%2Ffavicon.ico')
+    link(rel='stylesheet prefetch', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet prefetch', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet', href='/public/views/css/style.css')
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js")
+    script(type="text/javascript", src="/controllers/masonry.pkgd.js")
+    script(type="text/javascript", src="/controllers/imagesloaded.pkgd.js")
+    script(type="text/javascript", src="/controllers/main.js")
+  body
+    include header.pug
+    .main.text-center
+
+      if selected==="profile"
+        h2 My Images
+      else
+        h2  All Images
+
+      .grid
+        .grid-sizer
+        .grid-gutter
+        each image in images
+          .grid-item
+            img(src=image.url, onerror="this.onerror=null;this.src='/public/img/placeholder.png';")
+            p #{image.title}
+            .avafav
+              a(href="/profile/"+image.creator.twitter.username)
+                img(src= image.creator.twitter.photo, title=image.creator.twitter.username)
+                if image.creator._id.toString()===uId
+                  a.del(href='#', id=image._id)
+                    i.fa.fa-close.ic(aria-hidden='true')
+              if isAuthenticated
+                a.fav(href='#', id=image._id)
+                  i.fa.fa-star #{image.fans.length}
+              else
+                a.fav(href='/login')
+                  i.fa.fa-star #{image.fans.length}

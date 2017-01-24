@@ -16,42 +16,37 @@ module.exports = function (app, passport) {
 	var clickHandler = new ClickHandler();
 
 	app.route('/')
-		.get(isLoggedIn, function (req, res) {
-			res.sendFile(path + '/public/index.html');
-		});
+		.get(clickHandler.renderMain);
 
 	app.route('/login')
 		.get(function (req, res) {
-			res.sendFile(path + '/public/login.html');
+			res.redirect("/auth/twitter");
 		});
 
 	app.route('/logout')
 		.get(function (req, res) {
 			req.logout();
-			res.redirect('/login');
+			res.redirect('/');
 		});
 
 	app.route('/profile')
-		.get(isLoggedIn, function (req, res) {
-			res.sendFile(path + '/public/profile.html');
-		});
+		.get(isLoggedIn,clickHandler.renderProfile);
+		
+	app.route('/profile/:name')
+		.get(clickHandler.renderProfile);
 
-	app.route('/api/:id')
-		.get(isLoggedIn, function (req, res) {
-			res.json(req.user.github);
-		});
+	app.route('/api/')
+		.get(isLoggedIn,clickHandler.vote)
+		.post(isLoggedIn,clickHandler.addImg)
+		.delete(isLoggedIn,clickHandler.deleteImg);
+	app.get('/auth/twitter',
+		passport.authenticate('twitter'));
 
-	app.route('/auth/github')
-		.get(passport.authenticate('github'));
+	app.get('/auth/twitter/callback', 
+		passport.authenticate('twitter', { failureRedirect: '/login' }),function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
 
-	app.route('/auth/github/callback')
-		.get(passport.authenticate('github', {
-			successRedirect: '/',
-			failureRedirect: '/login'
-		}));
 
-	app.route('/api/:id/clicks')
-		.get(isLoggedIn, clickHandler.getClicks)
-		.post(isLoggedIn, clickHandler.addClick)
-		.delete(isLoggedIn, clickHandler.resetClicks);
 };
